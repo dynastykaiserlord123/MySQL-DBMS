@@ -3,5 +3,5 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>database</groupId>
 	<artifactId>SQLManager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>	
 </project>

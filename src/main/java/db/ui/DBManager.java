@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -29,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 
@@ -42,10 +44,9 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 	Image imgEmpty;
 	Panel pResult;
 	TextArea txtCommand;
-	Button butExecute;
-	Button butClearText;
-	Button butClearTable;
-	Button btn1;
+	JButton butExecute;
+	JButton butClearText;
+	JButton butClearTable;
 	JTable table;
 	ResultsDisplayWindow window;
 	TableSchema tableschema;
@@ -82,18 +83,21 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 
 		txtCommand.addKeyListener(this);
 
-		butExecute = new Button("Execute");
-		butClearText = new Button("Clear");
-		butClearTable = new Button("Clear table");
-
+		butExecute = new JButton("EXECUTE");
+		butClearText = new JButton("CLEAR");
+		butClearTable = new JButton("CLEAR TABLE");
 		butExecute.addActionListener(this);
 		butClearText.addActionListener(this);
 		butClearTable.addActionListener(this);
+		butExecute.setFont(new Font("Tahoma", Font.BOLD, 12));
+		butClearText.setFont(new Font("Tahoma", Font.BOLD, 12));
+		butClearTable.setFont(new Font("Tahoma", Font.BOLD, 12));
 		Panel pane = new Panel();
 		pane.setLayout(new GridLayout());
 		pane.add("East", butExecute);
 		pane.add("Center", butClearTable);
 		pane.add("West", butClearText);
+		pane.setVisible(true);
 		pCommand.add("Center", txtCommand);
 		pCommand.add("South", pane);
 
@@ -128,16 +132,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		fMain.setVisible(true);
 		txtCommand.requestFocus();
 		connect();
-//		try {
-//			Class.forName("com.mysql.jdbc.Driver");
-//			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/company", "root", "MyNewPass");
-//			dMeta = conn.getMetaData();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		refreshTables();
+		//jdbc:mysql://localhost:3306/company
 	}
 
 	void addMenu(MenuBar b, String name, String[] items) {

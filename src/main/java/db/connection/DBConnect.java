@@ -14,7 +14,6 @@ import javax.swing.table.TableModel;
 public class DBConnect {
 	public static Connection getConnect(String url, String username, String password)
 			throws ClassNotFoundException, SQLException {
-		//Class.forName("com.mysql.jdbc.Driver");
 		Connection conn = DriverManager.getConnection(url, username, password);
 		return conn;
 	}
@@ -42,18 +41,16 @@ public class DBConnect {
 		try {
 			ResultSetMetaData metaData = set.getMetaData();
 			int numberOfColumns = metaData.getColumnCount();
-			Vector columnNames = new Vector();
+			Vector<String> columnNames = new Vector<String>();
 
-			// Get the column names
 			for (int column = 0; column < numberOfColumns; column++) {
 				columnNames.addElement(metaData.getColumnLabel(column + 1));
 			}
 
-			// Get all rows.
-			Vector rows = new Vector();
+			Vector<Vector<Object>> rows = new Vector<Vector<Object>>();
 
 			while (set.next()) {
-				Vector newRow = new Vector();
+				Vector<Object> newRow = new Vector<Object>();
 
 				for (int i = 1; i <= numberOfColumns; i++) {
 					newRow.addElement(set.getObject(i));
