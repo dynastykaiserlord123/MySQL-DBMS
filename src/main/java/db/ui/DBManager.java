@@ -2,7 +2,6 @@ package db.ui;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -25,7 +24,6 @@ import java.awt.event.WindowListener;
 import java.awt.image.MemoryImageSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -80,7 +78,8 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		pCommand.setLayout(new BorderLayout());
 		pResult.setLayout(new BorderLayout());
 		txtCommand = new TextArea(5, 40);
-
+		txtCommand.setFont(new Font("Century", Font.ITALIC, 12));
+		txtCommand.setBackground(Color.LIGHT_GRAY);
 		txtCommand.addKeyListener(this);
 
 		butExecute = new JButton("EXECUTE");
@@ -89,9 +88,12 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		butExecute.addActionListener(this);
 		butClearText.addActionListener(this);
 		butClearTable.addActionListener(this);
-		butExecute.setFont(new Font("Tahoma", Font.BOLD, 12));
-		butClearText.setFont(new Font("Tahoma", Font.BOLD, 12));
-		butClearTable.setFont(new Font("Tahoma", Font.BOLD, 12));
+		butExecute.setFont(new Font("Centaur", Font.ITALIC, 14));
+		butClearText.setFont(new Font("Centaur", Font.ITALIC, 14));
+		butClearTable.setFont(new Font("Centaur", Font.ITALIC, 14));
+		butExecute.setBackground(Color.cyan);
+		butClearText.setBackground(Color.orange);
+		butClearTable.setBackground(Color.lightGray);
 		Panel pane = new Panel();
 		pane.setLayout(new GridLayout());
 		pane.add("East", butExecute);
@@ -117,6 +119,8 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			tableschema.setMinimumSize(new Dimension(250, 100));
 		}
 		window.setMinimumSize(new Dimension(550, 400));
+		tableschema.setBackground(Color.green);
+		tableschema.setVisible(true);
 		fMain.add("East", tableschema);
 		doLayout();
 		fMain.pack();
@@ -227,17 +231,17 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 
 	public void actionPerformed(ActionEvent e) {
 		String s = e.getActionCommand();
-		if (s.equals("Execute")) {
+		if (s.equals("EXECUTE")) {
 			if (conn != null) {
 				executeQuery();
 			}
 		} else if (s.equals("Connect...")) {
 			connect();
-		} else if (s.equals("Clear")) {
+		} else if (s.equals("CLEAR")) {
 			if (txtCommand.getText() != "") {
 				txtCommand.setText("");
 			}
-		} else if (s.equals("Clear table")) {
+		} else if (s.equals("CLEAR TABLE")) {
 			window.clearTable();
 		} else if (s.equals("Refresh Tables")) {
 			if (conn != null) {
@@ -278,7 +282,6 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						conn = DBConnect.getConnect(connectionDialog.dbURL.getText(),
 								connectionDialog.username.getText(), connectionDialog.password.getText());
 						if (conn != null) {
-							connectionDialog.dispose();
 							dMeta = conn.getMetaData();
 							refreshTables();
 							System.out.println("Successfully connected to database");
@@ -291,6 +294,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 							tableschema.update();
 						}
 					}
+					connectionDialog.dispose();
 				} catch (ClassNotFoundException ex) {
 					System.out.println("Driver does not exist");
 				} catch (SQLException e1) {
@@ -307,7 +311,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			int color_table = Color.cyan.getRGB();
 			int color_column = Color.magenta.getRGB();
 			int color_index = Color.lightGray.getRGB();
-			tableschema.addRow("", dMeta.getURL(), "-", 0);
+			tableschema.addLayer("", dMeta.getURL(), "-", 0);
 			String[] usertables = { "TABLE", "GLOBAL TEMPORARY", "VIEW" };
 			Vector<String> schemas = new Vector<String>();
 			Vector<String> tables = new Vector<String>();
@@ -326,13 +330,13 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 				String name = (String) tables.elementAt(i);
 				String schema = (String) schemas.elementAt(i);
 				String key = "tab-" + name + "-";
-				tableschema.addRow(key, name, "+", color_table);
+				tableschema.addLayer(key, name, "+", color_table);
 				String remark = (String) remarks.elementAt(i);
 				if ((schema != null) && !schema.trim().equals("")) {
-					tableschema.addRow(key + "s", "schema: " + schema);
+					tableschema.addLayer(key + "s", "schema: " + schema);
 				}
 				if ((remark != null) && !remark.trim().equals("")) {
-					tableschema.addRow(key + "r", " " + remark);
+					tableschema.addLayer(key + "r", " " + remark);
 				}
 				ResultSet col = dMeta.getColumns(null, schema, name, null);
 
@@ -340,16 +344,16 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 					while (col.next()) {
 						String c = col.getString(4);
 						String k1 = key + "col-" + c + "-";
-						tableschema.addRow(k1, c, "+", color_column);
+						tableschema.addLayer(k1, c, "+", color_column);
 						String type = col.getString(6);
-						tableschema.addRow(k1 + "t", "Type: " + type);
+						tableschema.addLayer(k1 + "t", "Type: " + type);
 						boolean nullable = col.getInt(11) != DatabaseMetaData.columnNoNulls;
-						tableschema.addRow(k1 + "n", "Nullable: " + nullable);
+						tableschema.addLayer(k1 + "n", "Nullable: " + nullable);
 					}
 				} finally {
 					col.close();
 				}
-				tableschema.addRow(key + "ind", "Indices", "+", 0);
+				tableschema.addLayer(key + "ind", "Indices", "+", 0);
 				ResultSet ind = dMeta.getIndexInfo(null, schema, name, false, false);
 				String oldiname = null;
 
@@ -359,28 +363,28 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						String iname = ind.getString(6);
 						String k2 = key + "ind-" + iname + "-";
 						if ((oldiname == null || !oldiname.equals(iname))) {
-							tableschema.addRow(k2, iname, "+", color_index);
-							tableschema.addRow(k2 + "u", "Unique: " + !nonunique);
+							tableschema.addLayer(k2, iname, "+", color_index);
+							tableschema.addLayer(k2 + "u", "Unique: " + !nonunique);
 							oldiname = iname;
 						}
 						String c = ind.getString(9);
-						tableschema.addRow(k2 + "c-" + c + "-", c);
+						tableschema.addLayer(k2 + "c-" + c + "-", c);
 					}
 				} finally {
 					ind.close();
 				}
 			}
-			tableschema.addRow("p", "Properties", "+", 0);
-			tableschema.addRow("pp", "Product: " + dMeta.getDatabaseProductName());
-			tableschema.addRow("pv", "Version: " + dMeta.getDatabaseProductVersion());
-			tableschema.addRow("pu", "User: " + dMeta.getUserName());
-			tableschema.addRow("pr", "ReadOnly: " + conn.isReadOnly());
-			tableschema.addRow("pa", "AutoCommit: " + conn.getAutoCommit());
-			tableschema.addRow("pd", "Driver: " + dMeta.getDriverName());
+			tableschema.addLayer("p", "Properties", "+", 0);
+			tableschema.addLayer("pp", "Product: " + dMeta.getDatabaseProductName());
+			tableschema.addLayer("pv", "Version: " + dMeta.getDatabaseProductVersion());
+			tableschema.addLayer("pu", "User: " + dMeta.getUserName());
+			tableschema.addLayer("pr", "ReadOnly: " + conn.isReadOnly());
+			tableschema.addLayer("pa", "AutoCommit: " + conn.getAutoCommit());
+			tableschema.addLayer("pd", "Driver: " + dMeta.getDriverName());
 		} catch (SQLException e) {
-			tableschema.addRow("", "Error getting metadata:", "-", 0);
-			tableschema.addRow("-", e.getMessage());
-			tableschema.addRow("-", e.getSQLState());
+			tableschema.addLayer("", "Error getting metadata:", "-", 0);
+			tableschema.addLayer("-", e.getMessage());
+			tableschema.addLayer("-", e.getSQLState());
 		}
 		tableschema.update();
 	}

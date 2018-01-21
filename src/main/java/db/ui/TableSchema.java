@@ -11,10 +11,6 @@ import java.awt.Panel;
 import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Vector;
 
 public class TableSchema extends Panel {
@@ -83,16 +79,13 @@ public class TableSchema extends Panel {
 	}
 
 	public void removeAll() {
-		vData = new Vector();
+		vData = new Vector<String[]>();
 		iRowCount = 0;
-
 		iMaxTextLength = 10;
-
 		repaint();
 	}
 
 	public boolean mouseDown(Event e, int x, int y) {
-
 		if (iRowHeight == 0 || x > iWidth || y > iHeight) {
 			return true;
 		}
@@ -159,7 +152,7 @@ public class TableSchema extends Panel {
 		return true;
 	}
 
-	public void addRow(String key, String value, String state, int colour) {
+	public void addLayer(String key, String value, String state, int colour) {
 		String[] row = new String[4];
 
 		if (value == null) {
@@ -168,7 +161,7 @@ public class TableSchema extends Panel {
 
 		row[0] = key;
 		row[1] = value;
-		row[2] = state; // null / "-" / "+"
+		row[2] = state;
 		row[3] = String.valueOf(colour);
 
 		vData.addElement(row);
@@ -181,8 +174,8 @@ public class TableSchema extends Panel {
 		iRowCount++;
 	}
 
-	public void addRow(String key, String value) {
-		addRow(key, value, null, 0);
+	public void addLayer(String key, String value) {
+		addLayer(key, value, null, 0);
 	}
 
 	public void paint(Graphics g) {

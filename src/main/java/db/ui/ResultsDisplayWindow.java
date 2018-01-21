@@ -4,30 +4,19 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Panel;
-import java.awt.Scrollbar;
 import java.sql.ResultSet;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ScrollPaneLayout;
-
 import db.connection.DBConnect;
 
 public class ResultsDisplayWindow extends Panel {
 	private Dimension dMinimum;
-	private int iRowHeight;
-	private int iGridWidth;
-	private int iX, iY;
-	private int iSbWidth, iSbHeight;
-	private int iWidth, iHeight;
 	protected int iRowCount;
 	protected String[] sColHead = new String[0];
 	protected Font fFont;
 	private JTable table;
-	private int[] iColWidth;
-	private int iColCount;
 	private JScrollPane pane;
 	public ResultsDisplayWindow() {
 		super();
@@ -39,10 +28,6 @@ public class ResultsDisplayWindow extends Panel {
 
 	public void setBounds(int x, int y, int w, int h) {
 		super.setBounds(x, y, w, h);
-		iSbHeight = 0;
-		iSbWidth = 0;
-		iHeight = h - iSbHeight;
-		iWidth = w - iSbWidth;
 		repaint();
 	}
 

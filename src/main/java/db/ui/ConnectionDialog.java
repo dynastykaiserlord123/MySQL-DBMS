@@ -1,7 +1,9 @@
 package db.ui;
 
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.Panel;
@@ -23,6 +25,7 @@ public class ConnectionDialog extends Frame {
 
 	public ConnectionDialog(String title) {
 		super(title);
+		setBackground(Color.LIGHT_GRAY);
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		urlPanel = new Panel();
 		unPanel = new Panel();
@@ -36,12 +39,15 @@ public class ConnectionDialog extends Frame {
 		dbURL = new TextField(20);
 		username = new TextField(20);
 		password = new TextField(20);
+		dbURL.setBackground(Color.cyan);
+		username.setBackground(Color.cyan);
+		password.setBackground(Color.cyan);
 		String[] driverList = { "com.mysql.jdbc.Driver", "Local operation" };
 		driver = new JComboBox<String>(driverList);
-		password.setEchoChar('#');
-		dbURL.setSize(100, 50);
-		username.setSize(100, 50);
-		password.setSize(100, 50);
+		password.setEchoChar('*');
+		dbURL.setSize(125, 75);
+		username.setSize(125, 75);
+		password.setSize(125, 75);
 		Label url = new Label("Database url");
 		Label user = new Label("Username");
 		Label pw = new Label("Password");
@@ -58,7 +64,8 @@ public class ConnectionDialog extends Frame {
 		add(unPanel);
 		add(pwPanel);
 		add(driverPanel);
-		connect = new Button("Connect");
+		connect = new Button("CONNECT TO DATABASE");
+		connect.setFont(new Font("Tahoma", Font.BOLD, 12));
 		buttonPanel.add(connect);
 		add(buttonPanel);
 		setVisible(true);
