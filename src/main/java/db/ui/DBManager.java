@@ -4,6 +4,7 @@ import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -33,6 +34,7 @@ import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 
 import db.connection.DBConnect;
@@ -138,7 +140,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		fMain.setVisible(true);
 		txtCommand.requestFocus();
 		connect();
-		//jdbc:mysql://localhost:3306/company
+		// jdbc:mysql://localhost:3306/company
 	}
 
 	void addMenu(MenuBar b, String name, String[] items) {
@@ -276,24 +278,42 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			frame.setMinimumSize(fMain.getSize());
 			Panel textpane = new Panel();
 			Panel buttonpane = new Panel();
-			final TextField box = new TextField();
+			final TextField box = new TextField(20);
 			Label desciption = new Label("Name of table to import data to");
 			JButton button = new JButton("Enter table name");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					ImportDataDialog in = new ImportDataDialog(box.getText(), conn);
-					frame.dispose();
+					if (box.getText().length() == 0) {
+						final Frame parent = new Frame();
+						parent.setLayout(new FlowLayout());
+						JLabel label = new JLabel("Table name cannot be empty!");
+				        JButton button = new JButton();
+				        button.setText("OK");
+				        parent.add(label);
+				        parent.add(button);
+				        parent.pack();
+				        parent.setVisible(true);
+				        button.addActionListener(new ActionListener() {
+				            public void actionPerformed(java.awt.event.ActionEvent evt) {
+				            	parent.dispose();
+				            }
+				        });
+					} else {
+						ImportDataDialog in = new ImportDataDialog(box.getText(), conn);
+						frame.dispose();
+					}
 				}
 			});
-			textpane.setLayout(new GridLayout());
-			buttonpane.setLayout(new GridLayout());
+			textpane.setLayout(new FlowLayout());
+			buttonpane.setLayout(new FlowLayout());
 			textpane.add(desciption);
 			textpane.add(box);
-			buttonpane.add(button);	
+			buttonpane.add(button);
+			frame.addWindowListener(this);
 			frame.add(textpane);
 			frame.add(buttonpane);
 			frame.pack();
-			frame.setVisible(true);			
+			frame.setVisible(true);
 		}
 	}
 

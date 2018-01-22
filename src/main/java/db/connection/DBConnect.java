@@ -19,22 +19,28 @@ public class DBConnect {
 	}
 
 	public static void executeUpdate(Connection conn, String query) {
-		try {
-			PreparedStatement ps = conn.prepareStatement(query);
-			ps.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (query.length() > 0) {
+			try {
+				PreparedStatement ps = conn.prepareStatement(query);
+				ps.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 
 	public static ResultSet executeQuery(Connection conn, String query) {
-		try {
-			PreparedStatement ps = conn.prepareStatement(query);
-			ResultSet set = ps.executeQuery();
-			return set;
-		} catch (SQLException e) {
-			return null;
+		if (query.length() > 0) {
+			try {
+				PreparedStatement ps = conn.prepareStatement(query);
+				ResultSet set = ps.executeQuery();
+				return set;
+			} catch (SQLException e) {
+				return null;
+			}
 		}
+		return null;
 	}
 
 	public static TableModel resultSetToTableModel(ResultSet set) {
