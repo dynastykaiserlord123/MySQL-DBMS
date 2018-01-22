@@ -1,5 +1,6 @@
 package db.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Event;
@@ -8,13 +9,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Panel;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.util.Vector;
 
 public class TableSchema extends Panel {
-
 	private static FontMetrics fMetrics;
 	private static Font fFont;
 	private static int iRowHeight;
@@ -23,11 +22,10 @@ public class TableSchema extends Panel {
 		fFont = new Font("Centaur", Font.BOLD, 14);
 		fMetrics = Toolkit.getDefaultToolkit().getFontMetrics(fFont);
 		iRowHeight = getMaxHeight(fMetrics);
-		iIndentWidth = 12;
+		iIndentWidth = 10;
 	}
 	private Dimension dMinimum;
 	private int iMaxTextLength;
-	private Scrollbar sbHoriz, sbVert;
 	private int iWidth, iHeight;
 	private int iSbWidth, iSbHeight;
 	private Vector<String[]> vData;
@@ -39,25 +37,19 @@ public class TableSchema extends Panel {
 	public TableSchema() {
 		super();
 		vData = new Vector<String[]>();
-		setLayout(null);
-		sbHoriz = new Scrollbar(Scrollbar.HORIZONTAL);
-		add("South", sbHoriz);
-		sbVert = new Scrollbar(Scrollbar.VERTICAL);
-		add("East", sbVert);
+		setLayout(new BorderLayout());
 	}
 
 	public void setBounds(int x, int y, int w, int h) {
 		super.setBounds(x, y, w, h);
-		iSbHeight = sbHoriz.getPreferredSize().height;
-		iSbWidth = sbVert.getPreferredSize().width;
+		iSbHeight = 17;
+		iSbWidth = 17;
 		iHeight = h - iSbHeight;
 		iWidth = w - iSbWidth;
-		sbHoriz.setBounds(0, iHeight, iWidth, iSbHeight);
-		sbVert.setBounds(iWidth, 0, iSbWidth, iHeight);
 		iImage = null;
 		repaint();
 	}
-
+	
 	public void setMinimumSize(Dimension d) {
 		dMinimum = d;
 	}
@@ -89,20 +81,14 @@ public class TableSchema extends Panel {
 		if (iRowHeight == 0 || x > iWidth || y > iHeight) {
 			return true;
 		}
-
 		y += iRowHeight / 2;
-
 		String[] root = new String[100];
-
 		root[0] = "";
-
 		int currentindent = 0;
 		int cy = iRowHeight;
 		boolean closed = false;
 		int i = 0;
-
 		y += iY;
-
 		for (; i < iRowCount; i++) {
 			String[] s = (String[]) vData.elementAt(i);
 			String key = s[0];

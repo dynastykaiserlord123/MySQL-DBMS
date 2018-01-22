@@ -8,12 +8,14 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
 import java.awt.TextArea;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -60,7 +63,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		MenuBar bar = new MenuBar();
 
 		String[] fitems = { "-Connect...", "--", "-Open Script...", "-Save Script...", "-Save Result...", "--",
-				"-Import Data", "-Exit" };
+				"-Import Data...", "-Exit" };
 
 		addMenu(bar, "File", fitems);
 
@@ -78,12 +81,12 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		pCommand.setLayout(new BorderLayout());
 		pResult.setLayout(new BorderLayout());
 		txtCommand = new TextArea(5, 40);
-		txtCommand.setFont(new Font("Century", Font.ITALIC, 12));
+		txtCommand.setFont(new Font("Century", Font.ITALIC, 16));
 		txtCommand.setBackground(Color.LIGHT_GRAY);
 		txtCommand.addKeyListener(this);
 
 		butExecute = new JButton("EXECUTE");
-		butClearText = new JButton("CLEAR");
+		butClearText = new JButton("CLEAR QUERIES");
 		butClearTable = new JButton("CLEAR TABLE");
 		butExecute.addActionListener(this);
 		butClearText.addActionListener(this);
@@ -119,7 +122,6 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			tableschema.setMinimumSize(new Dimension(250, 100));
 		}
 		window.setMinimumSize(new Dimension(550, 400));
-		tableschema.setBackground(Color.green);
 		tableschema.setVisible(true);
 		fMain.add("East", tableschema);
 		doLayout();
@@ -237,7 +239,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			}
 		} else if (s.equals("Connect...")) {
 			connect();
-		} else if (s.equals("CLEAR")) {
+		} else if (s.equals("CLEAR QUERIES")) {
 			if (txtCommand.getText() != "") {
 				txtCommand.setText("");
 			}
@@ -268,6 +270,30 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			SaveResultsDialog results = new SaveResultsDialog(set);
 		} else if (s.equals("Save Script...")) {
 			SaveResultsDialog saveScript = new SaveResultsDialog(txtCommand);
+		} else if (s.equals("Import Data...")) {
+			final Frame frame = new Frame("Enter table name to import data into");
+			frame.setLayout(new BoxLayout(frame, BoxLayout.Y_AXIS));
+			frame.setMinimumSize(fMain.getSize());
+			Panel textpane = new Panel();
+			Panel buttonpane = new Panel();
+			final TextField box = new TextField();
+			Label desciption = new Label("Name of table to import data to");
+			JButton button = new JButton("Enter table name");
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ImportDataDialog in = new ImportDataDialog(box.getText(), conn);
+					frame.dispose();
+				}
+			});
+			textpane.setLayout(new GridLayout());
+			buttonpane.setLayout(new GridLayout());
+			textpane.add(desciption);
+			textpane.add(box);
+			buttonpane.add(button);	
+			frame.add(textpane);
+			frame.add(buttonpane);
+			frame.pack();
+			frame.setVisible(true);			
 		}
 	}
 
@@ -288,7 +314,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						}
 					} else {
 						System.out.println("Local operation mode selected");
-						if(conn != null) {
+						if (conn != null) {
 							conn.close();
 							tableschema.removeAll();
 							tableschema.update();

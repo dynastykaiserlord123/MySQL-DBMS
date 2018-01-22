@@ -10,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
