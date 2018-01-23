@@ -27,6 +27,7 @@ import java.awt.event.WindowListener;
 import java.awt.image.MemoryImageSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -65,7 +66,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		MenuBar bar = new MenuBar();
 
 		String[] fitems = { "-Connect...", "--", "-Open Script...", "-Save Script...", "-Save Result...", "--",
-				"-Import Data...", "-Exit" };
+				"-Import Data...", "-Backup Database...", "--", "-Exit" };
 
 		addMenu(bar, "File", fitems);
 
@@ -119,9 +120,9 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
 		if (d.width >= 640) {
-			tableschema.setMinimumSize(new Dimension(300, 100));
+			tableschema.setMinimumSize(new Dimension(300, 150));
 		} else {
-			tableschema.setMinimumSize(new Dimension(250, 100));
+			tableschema.setMinimumSize(new Dimension(275, 125));
 		}
 		window.setMinimumSize(new Dimension(550, 400));
 		tableschema.setVisible(true);
@@ -279,7 +280,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			Panel textpane = new Panel();
 			Panel buttonpane = new Panel();
 			final TextField box = new TextField(20);
-			Label desciption = new Label("Name of table to import data to");
+			Label description = new Label("Name of table to import data to");
 			JButton button = new JButton("Enter table name");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -287,17 +288,17 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						final Frame parent = new Frame();
 						parent.setLayout(new FlowLayout());
 						JLabel label = new JLabel("Table name cannot be empty!");
-				        JButton button = new JButton();
-				        button.setText("OK");
-				        parent.add(label);
-				        parent.add(button);
-				        parent.pack();
-				        parent.setVisible(true);
-				        button.addActionListener(new ActionListener() {
-				            public void actionPerformed(java.awt.event.ActionEvent evt) {
-				            	parent.dispose();
-				            }
-				        });
+						JButton button = new JButton();
+						button.setText("OK");
+						parent.add(label);
+						parent.add(button);
+						parent.pack();
+						parent.setVisible(true);
+						button.addActionListener(new ActionListener() {
+							public void actionPerformed(java.awt.event.ActionEvent evt) {
+								parent.dispose();
+							}
+						});
 					} else {
 						ImportDataDialog in = new ImportDataDialog(box.getText(), conn);
 						frame.dispose();
@@ -306,7 +307,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			});
 			textpane.setLayout(new FlowLayout());
 			buttonpane.setLayout(new FlowLayout());
-			textpane.add(desciption);
+			textpane.add(description);
 			textpane.add(box);
 			buttonpane.add(button);
 			frame.addWindowListener(this);
@@ -314,6 +315,9 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			frame.add(buttonpane);
 			frame.pack();
 			frame.setVisible(true);
+		} else if (s.equals("Backup Database...")) {
+			BackupDatabaseDialog bdd = new BackupDatabaseDialog(conn);
+			bdd.addWindowListener(this);
 		}
 	}
 
@@ -327,18 +331,28 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						Class.forName(connectionDialog.driver.getSelectedItem().toString());
 						conn = DBConnect.getConnect(connectionDialog.dbURL.getText(),
 								connectionDialog.username.getText(), connectionDialog.password.getText());
-						if (conn != null) {
-							dMeta = conn.getMetaData();
-							refreshTables();
-							System.out.println("Successfully connected to database");
-						}
 					} else {
 						System.out.println("Local operation mode selected");
 						if (conn != null) {
 							conn.close();
-							tableschema.removeAll();
-							tableschema.update();
 						}
+						String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+						Class.forName(driver);
+						String connectionURL = null;
+						if (connectionDialog.dbURL.getText().length() == 0) {
+							connectionURL = "jdbc:derby:memory:testDB;create=true";
+						} else {
+							//jdbc:derby:memory:testDB;restoreFrom=C:\backupdatabase\testDB
+							connectionURL = connectionDialog.dbURL.getText();
+						}
+						conn = DriverManager.getConnection(connectionURL);
+						tableschema.removeAll();
+						tableschema.update();
+					}
+					if (conn != null) {
+						dMeta = conn.getMetaData();
+						refreshTables();
+						System.out.println("Successfully connected to database");
 					}
 					connectionDialog.dispose();
 				} catch (ClassNotFoundException ex) {

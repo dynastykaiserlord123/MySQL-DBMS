@@ -19,7 +19,7 @@ public class TableSchema extends Panel {
 	private static int iRowHeight;
 	private static int iIndentWidth;
 	static {
-		fFont = new Font("Centaur", Font.BOLD, 14);
+		fFont = new Font("Tahoma", Font.BOLD, 14);
 		fMetrics = Toolkit.getDefaultToolkit().getFontMetrics(fFont);
 		iRowHeight = getMaxHeight(fMetrics);
 		iIndentWidth = 10;
@@ -61,11 +61,6 @@ public class TableSchema extends Panel {
 	public Dimension minimumSize() {
 		return dMinimum;
 	}
-
-	public void update(Graphics g) {
-		paint(g);
-	}
-	
 	public void update() {
 		repaint();
 	}
@@ -134,7 +129,6 @@ public class TableSchema extends Panel {
 			vData.setElementAt(s, i);
 			repaint();
 		}
-
 		return true;
 	}
 
