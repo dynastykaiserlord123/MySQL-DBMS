@@ -23,7 +23,7 @@ public class ImportDataDialog extends JFrame {
 		int userSelection = fileChooser.showSaveDialog(this);
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File fileToSave = fileChooser.getSelectedFile();
-			if(!fileToSave.getAbsolutePath().contains(".csv")) {
+			if (!fileToSave.getAbsolutePath().contains(".csv")) {
 				throw new IllegalArgumentException("Only .csv files are currently supported");
 			}
 			try {
@@ -52,16 +52,16 @@ public class ImportDataDialog extends JFrame {
 						String[] values = line.split(",");
 						for (int k = 0; k < values.length; k++) {
 							try {
-								int value = Integer.parseInt(values[k]);
-								ps2.setInt(k + 1, value);
+								ps2.setInt(k + 1, Integer.parseInt(values[k]));
 							} catch (Exception ex) {
 								ps2.setString(k + 1, values[k]);
 							}
-						}try {
+						}
+						try {
 							ps2.execute();
-						}catch(MySQLIntegrityConstraintViolationException ex) {
+						} catch (MySQLIntegrityConstraintViolationException ex) {
 							System.out.println("Duplicate entry encountered: " + line);
-						}						
+						}
 					}
 				}
 				br.close();

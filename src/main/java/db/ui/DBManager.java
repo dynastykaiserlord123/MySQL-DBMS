@@ -55,6 +55,8 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 	ResultsDisplayWindow window;
 	TableSchema tableschema;
 	ConnectionDialog connectionDialog;
+	Boolean local = false;
+	Boolean backingUpLocal = false;
 
 	public DBManager() {
 		fMain = new JFrame("MySQL Database Manager");
@@ -187,6 +189,10 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
+		}
+		if (((Frame)e.getSource()).getTitle().equals("MySQL Database Manager") && local) {
+			BackupDatabaseDialog bdd = new BackupDatabaseDialog(conn);
+			bdd.addWindowListener(this);
 		}
 		((Frame) source).dispose();
 	}
@@ -333,6 +339,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 								connectionDialog.username.getText(), connectionDialog.password.getText());
 					} else {
 						System.out.println("Local operation mode selected");
+						local = true;
 						if (conn != null) {
 							conn.close();
 						}
@@ -342,7 +349,7 @@ public class DBManager extends Applet implements ActionListener, WindowListener,
 						if (connectionDialog.dbURL.getText().length() == 0) {
 							connectionURL = "jdbc:derby:memory:testDB;create=true";
 						} else {
-							//jdbc:derby:memory:testDB;restoreFrom=C:\backupdatabase\testDB
+							// jdbc:derby:memory:testDB;restoreFrom=C:\backupdatabase\testDB
 							connectionURL = connectionDialog.dbURL.getText();
 						}
 						conn = DriverManager.getConnection(connectionURL);
